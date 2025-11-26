@@ -1,5 +1,6 @@
 #include <stdint.h>
-#include "vga.h"
+#include "keyboard/keyboard.h"
+#include "vga/vga.h"
 
 void vga_print(const char*);
 void vga_clear();

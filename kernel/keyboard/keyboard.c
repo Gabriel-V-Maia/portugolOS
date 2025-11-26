@@ -1,3 +1,4 @@
+
 #include <stdint.h>
 
 static const char scancode_us_qwerty[] = {
@@ -13,10 +14,26 @@ uint8_t inb(uint16_t port) {
     return ret;
 }
 
-char keyboard_read() {
-    uint8_t sc = inb(0x60);
+void outb(uint16_t port, uint8_t val) {
+    __asm__ volatile("outb %0, %1"::"a"(val),"Nd"(port));
+}
 
-    if(sc > 58) return 0; 
+int keyboard_available() {
+    return (inb(0x64) & 0x01);
+}
+
+char keyboard_read() {
+    if (!keyboard_available()) {
+        return 0;
+    }
+    
+    uint8_t sc = inb(0x60);
+   
+    if (sc & 0x80) {
+        return 0;
+    }
+    
+    if (sc > 58) return 0; 
     return scancode_us_qwerty[sc];
 }
 
