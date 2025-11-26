@@ -10,11 +10,7 @@ CFLAGS = -m32 -ffreestanding -O2 -Wall -Wextra
 LDFLAGS = -m elf_i386
 
 # ---- Source files ----
-KERNEL_SRC = \
-	kernel/multiboot_header.c \
-	kernel/kernel.c \
-	kernel/keyboard.c \
-	kernel/vga.c
+KERNEL_SRC = $(shell find kernel -name '*.c')
 
 KERNEL_OBJ = $(KERNEL_SRC:.c=.o)
 
