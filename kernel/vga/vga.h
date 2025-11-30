@@ -4,6 +4,7 @@
 void vga_init();
 void vga_putc(char c);
 void vga_print(const char* s);
-
+void vga_clear();
+ 
 #endif
 

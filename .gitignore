@@ -11,6 +11,8 @@
 *.iso
 *.bin
 
+iso/*
+
 # Linker output
 *.ilk
 *.map
