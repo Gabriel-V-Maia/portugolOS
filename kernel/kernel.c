@@ -1,30 +1,25 @@
 #include <stdint.h>
+
 #include "keyboard/keyboard.h"
 #include "libs/kprintf.h"
 #include "multiboot.h"  
+#include "checks/bootloader_magic.h"
 
-void kernel_main(uint32_t magic, multiboot_info_t* mbi) {
-    kclear();
-    kprintf("Bem vindo ao portugol OS!!\n\n");
-    
-    if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-        kprintf("ERRO: Nao foi bootado pelo GRUB!\n");
-        kprintf("Magic recebido: 0x%x\n", magic);
-        for(;;);
-    }
-    
-    kprintf("GRUB detectado! Magic: 0x%x\n", magic);
+void display_info(multiboot_info_t* mbi, uint32_t* magic)
+{
+    kprintf("\n");
+
+    kprintf(magic);
     
     if (mbi->flags & MULTIBOOT_INFO_MEMORY) {
         uint32_t mem_lower_kb = mbi->mem_lower;
         uint32_t mem_upper_kb = mbi->mem_upper;
         uint32_t total_mb = (mem_lower_kb + mem_upper_kb) / 1024;
         
-        kprintf("Memoria detectada: %d MB\n", total_mb);
+        kprintf("Memoria detectada: %d  MB\n", total_mb);
         kprintf("  - Lower: %d KB\n", mem_lower_kb);
         kprintf("  - Upper: %d KB\n", mem_upper_kb);
     }
-    
     if (mbi->flags & MULTIBOOT_INFO_MEM_MAP) {
         kprintf("\nMemory Map:\n");
         
@@ -44,7 +39,16 @@ void kernel_main(uint32_t magic, multiboot_info_t* mbi) {
     }
     
     kprintf("\n\n");
-    
+   
+}
+
+void kernel_main(uint32_t magic, multiboot_info_t* mbi) {
+    kclear();
+    kprintf("Bem vindo ao portugol OS!!\n\n");
+   
+    check_grub(magic);   
+    // display_info(mbi, magic);
+   
     while (1) {   
         char input = keyboard_read();
         if (input != 0) {
