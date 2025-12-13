@@ -1,18 +1,25 @@
+
 # ===============================
 #  portugolOS — Makefile
 # ===============================
 
 # ---- Toolchain ----
-CC = i686-elf-gcc
-LD = i686-elf-ld
+CC  = i686-elf-gcc
+LD  = i686-elf-ld
+AS  = i686-elf-as
 
-CFLAGS = -m32 -ffreestanding -O2 -Wall -Wextra
+# ---- Flags ----
+CFLAGS  = -m32 -ffreestanding -O2 -Wall -Wextra
 LDFLAGS = -m elf_i386
 
-# ---- Source files ----
-KERNEL_SRC = $(shell find kernel -name '*.c')
+# ---- Sources ----
+C_SRC   = $(shell find kernel -name '*.c')
+ASM_SRC = boot/boot.s
 
-KERNEL_OBJ = $(KERNEL_SRC:.c=.o)
+C_OBJ   = $(C_SRC:.c=.o)
+ASM_OBJ = $(ASM_SRC:.s=.o)
+
+OBJS = $(ASM_OBJ) $(C_OBJ)
 
 # ===============================
 #  Build targets
@@ -20,11 +27,16 @@ KERNEL_OBJ = $(KERNEL_SRC:.c=.o)
 
 all: kernel.bin
 
-kernel.bin: $(KERNEL_OBJ)
-	$(LD) $(LDFLAGS) -T kernel/linker.ld -o $@ $(KERNEL_OBJ)
+kernel.bin: $(OBJS)
+	$(LD) $(LDFLAGS) -T kernel/linker.ld -o $@ $(OBJS)
 
+# ---- Compile C ----
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# ---- Assemble ASM ----
+%.o: %.s
+	$(AS) $< -o $@
 
 # ---- Build ISO ----
 iso: kernel.bin
@@ -37,7 +49,9 @@ iso: kernel.bin
 run: iso
 	qemu-system-i386 -cdrom portugolOS.iso -m 64M
 
-# ---- Clean build ----
+# ---- Clean ----
 clean:
-	rm -rf kernel/*.o kernel.bin iso portugolOS.iso
+	find kernel boot -name '*.o' -delete
+	rm -rf kernel.bin iso portugolOS.iso
+
 
