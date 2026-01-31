@@ -1,5 +1,5 @@
 #ifndef KPRINTF_H
-#define KPRINFT_H
+#define KPRINTF_H
 
 void kprintf(const char *format, ...);
 void kclear();
