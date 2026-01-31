@@ -1,5 +1,5 @@
-
 #include <stdint.h>
+#include "../libs/kprintf.h"
 
 static const char scancode_us_qwerty[] = {
     0, 27, '1','2','3','4','5','6','7','8','9','0','-','=', 
@@ -22,7 +22,8 @@ int keyboard_available() {
     return (inb(0x64) & 0x01);
 }
 
-char keyboard_read() {
+char keyboard_read() 
+{
     if (!keyboard_available()) {
         return 0;
     }
@@ -34,6 +35,7 @@ char keyboard_read() {
     }
     
     if (sc > 58) return 0; 
+
     return scancode_us_qwerty[sc];
 }
 
