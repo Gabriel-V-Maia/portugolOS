@@ -2,6 +2,8 @@
 
 Um kernel experimental feito para estudar sistemas operacionais, usando portugol como uma piada msm.
 
+ISSO É MERO ESTUDO!! NÃO VOU USAR A CONVENÇÃO DE COMMITS
+
 ## Requisitos
 
 Este projeto **não usa o compilador padrão do sistema**.
@@ -11,7 +13,7 @@ Este projeto **não usa o compilador padrão do sistema**.
 - `i686-elf-gcc`
 - `i686-elf-ld`
 - `grub-mkrescue`
-- `qemu-system-i386` (opcional, para testes)
+- `qemu-system-i386` (opcional, para testes, e né, rodar o sistema)
 
 ## Por quê?
 
