@@ -1,59 +1,54 @@
-#include <stdint.h>
-
 #include "keyboard/keyboard.h"
 #include "libs/kprintf.h"
 #include "multiboot.h"  
 #include "checks/bootloader_magic.h"
+#include "libs/string.h"
+#include "mm/memory.h"
 
-void display_info(multiboot_info_t* mbi, uint32_t* magic)
-{
-    kprintf("\n");
+#define CMD_BUFFER_SIZE 256
 
-    kprintf(magic);
-    
-    if (mbi->flags & MULTIBOOT_INFO_MEMORY) {
-        uint32_t mem_lower_kb = mbi->mem_lower;
-        uint32_t mem_upper_kb = mbi->mem_upper;
-        uint32_t total_mb = (mem_lower_kb + mem_upper_kb) / 1024;
-        
-        kprintf("Memoria detectada: %d  MB\n", total_mb);
-        kprintf("  - Lower: %d KB\n", mem_lower_kb);
-        kprintf("  - Upper: %d KB\n", mem_upper_kb);
-    }
-    if (mbi->flags & MULTIBOOT_INFO_MEM_MAP) {
-        kprintf("\nMemory Map:\n");
-        
-        multiboot_mmap_entry_t* mmap = (multiboot_mmap_entry_t*)mbi->mmap_addr;
-        multiboot_mmap_entry_t* mmap_end = (multiboot_mmap_entry_t*)(mbi->mmap_addr + mbi->mmap_length);
-        
-        int region = 0;
-        while (mmap < mmap_end) {
-            kprintf("  Regiao %d: 0x%x - 0x%x (%s)\n",
-                    region++,
-                    (uint32_t)mmap->addr,
-                    (uint32_t)(mmap->addr + mmap->len),
-                    mmap->type == 1 ? "USAVEL" : "RESERVADO");
-            
-            mmap = (multiboot_mmap_entry_t*)((uint32_t)mmap + mmap->size + sizeof(mmap->size));
-        }
-    }
-    
-    kprintf("\n\n");
-   
-}
+static char cmd_buffer[CMD_BUFFER_SIZE];
+static int cmd_index = 0;
 
-void kernel_main(uint32_t magic, multiboot_info_t* mbi) {
+void kernel_main(unsigned int magic, multiboot_info_t* mbi) {
     kclear();
+    mem_init(mbi->mem_lower, mbi->mem_upper);
     kprintf("Bem vindo ao portugol OS!!\n\n");
-   
-    check_grub(magic);   
-    // display_info(mbi, magic);
-   
-    while (1) {   
+
+    check_grub(magic);
+
+    kprintf("portugolOS> ");
+
+
+    for(;;) {   
         char input = keyboard_read();
+        
         if (input != 0) {
-            char str[2] = {input, '\0'};
-            kprintf(str);
+            if (input == '\n') {
+                cmd_buffer[cmd_index] = '\0'; 
+                kprintf("\n");
+                
+                process_command(cmd_buffer);
+                
+                cmd_index = 0;
+                cmd_buffer[0] = '\0';
+                
+                kprintf("portugolOS> ");
+            }
+            else if (input == '\b') {
+                if (cmd_index > 0) {
+                    cmd_index--;
+                    cmd_buffer[cmd_index] = '\0';
+                    kprintf("\b \b");
+                }
+            }
+            else {
+                if (cmd_index < CMD_BUFFER_SIZE - 1) {
+                    cmd_buffer[cmd_index++] = input;
+                    char str[2] = {input, '\0'};
+                    kprintf(str);
+                }
+            }
         }
     }
 }
