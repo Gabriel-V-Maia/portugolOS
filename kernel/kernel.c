@@ -4,6 +4,9 @@
 #include "checks/bootloader_magic.h"
 #include "libs/string.h"
 #include "mm/memory.h"
+#include "shell/shell.h"
+#include "vfs/vfs.h"
+
 
 #define CMD_BUFFER_SIZE 256
 
@@ -12,7 +15,9 @@ static int cmd_index = 0;
 
 void kernel_main(unsigned int magic, multiboot_info_t* mbi) {
     kclear();
+    init_vfs();
     mem_init(mbi->mem_lower, mbi->mem_upper);
+    
     kprintf("Bem vindo ao portugol OS!!\n\n");
 
     check_grub(magic);
@@ -28,8 +33,8 @@ void kernel_main(unsigned int magic, multiboot_info_t* mbi) {
                 cmd_buffer[cmd_index] = '\0'; 
                 kprintf("\n");
                 
-                process_command(cmd_buffer);
-                
+                process_command(cmd_buffer);        
+
                 cmd_index = 0;
                 cmd_buffer[0] = '\0';
                 
