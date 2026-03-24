@@ -1,38 +1,41 @@
 # portugolOS
 
-Um kernel experimental feito para estudar sistemas operacionais, usando portugol como uma piada msm.
+Um kernel experimental para estudo de sistemas operacionais, usando portugol como tema e piada.
 
-ISSO É MERO ESTUDO!! NÃO VOU USAR A CONVENÇÃO DE COMMITS
+> Este projeto é apenas para fins de aprendizado.
+
+---
 
 ## Requisitos
 
-Este projeto **não usa o compilador padrão do sistema**.
+Este projeto **não usa o compilador padrão do sistema**. É necessário um cross-compiler para x86 32-bit:
 
-É necessário um cross-compiler para kernel x86 32-bit:
+| Ferramenta | Obrigatório |
+|---|---|
+| `i686-elf-gcc` | sim |
+| `i686-elf-ld` | sim |
+| `grub-mkrescue` | sim |
+| `qemu-system-i386` | opcional (para testes) |
 
-- `i686-elf-gcc`
-- `i686-elf-ld`
-- `grub-mkrescue`
-- `qemu-system-i386` (opcional, para testes, e né, rodar o sistema)
+### Por quê cross-compiler?
 
-## Por quê?
+Um kernel não roda sobre Linux e não tem acesso à libc. O `i686-elf-gcc` gera binários *freestanding* no formato ELF, compatíveis com GRUB e com o linker script do projeto.
 
-Um kernel não roda sobre Linux nem usa libc.  
-O `i686-elf-gcc` gera binários *freestanding* no formato ELF, compatíveis com GRUB e com o linker script do projeto.
+---
 
 ## Como compilar
 
 Com o toolchain no PATH:
-
 ```bash
 make
 make iso
-make run ou qemu-system-i386 -cdrom portugolOS.iso
+make run
+# ou diretamente:
+qemu-system-i386 -cdrom portugolOS.iso
 ```
 
-Então o qemu vai rodar o sistema.
+---
 
-# Estrutura para desenvolver o OS
+## Estrutura do projeto
 
 TODO
-
