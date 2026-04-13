@@ -30,6 +30,11 @@ void init_vfs();
 vfs_cursor* init_cursor();
 void create_file(vfs_cursor* cursor, char* nome, char* conteudo);
 void list_files(vfs_cursor* cursor);
+void create_folder(vfs_cursor* cursor, char* nome);
+int  change_dir(vfs_cursor* cursor, char* nome);
+file* find_file(vfs_cursor* cursor, char* nome);
+char* read_file(vfs_cursor* cursor, char* nome);
+void delete_file(vfs_cursor* cursor, char* nome);
 
 void test_vfs();
 
