@@ -80,6 +80,40 @@ void free(void* ptr) {
     merge_blocks();  
 }
 
+void* calloc(size_t count, size_t size)
+{
+    size_t total = count * size;
+    void* ptr = malloc(total);
+    if (!ptr) return NULL;
+    
+    char* p = (char*)ptr;
+    for (size_t i = 0; i < total; i++)
+        p[i] = 0;
+    
+    return ptr;
+}
+
+void* realloc(void* ptr, size_t size)
+{
+    if (!ptr) return malloc(size);
+    if (size == 0) { free(ptr); return NULL; }
+    
+    mem_block_t* block = (mem_block_t*)((char*)ptr - sizeof(mem_block_t));
+    
+    if (block->size >= size) return ptr;
+    
+    void* new_ptr = malloc(size);
+    if (!new_ptr) return NULL;
+    
+    char* src = (char*)ptr;
+    char* dst = (char*)new_ptr;
+    for (size_t i = 0; i < block->size; i++)
+        dst[i] = src[i];
+    
+    free(ptr);
+    return new_ptr;
+}
+
 void mem_debug() 
 {
     mem_block_t* current = head;
