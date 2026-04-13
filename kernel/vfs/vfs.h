@@ -10,12 +10,13 @@ typedef struct
     folder* parent;
 } file;
 
-typedef struct folder
-{
-    char nome[32];
-    folder* parent;
+typedef struct folder {
+    char nome[128];
+    struct folder* parent;
     file** files;
     unsigned int filecount;
+    struct folder** subfolders;      
+    unsigned int subfoldercount;     
 } folder;
 
 typedef struct {
